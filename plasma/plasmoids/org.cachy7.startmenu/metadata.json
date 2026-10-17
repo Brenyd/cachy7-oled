@@ -1,0 +1,21 @@
+{
+    "KPackageStructure": "Plasma/Applet",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "Cachy7 OLED"
+            }
+        ],
+        "Category": "Application Launchers",
+        "Description": "Windows 7 style two-column start menu with a glass orb wearing the CachyOS logo",
+        "Icon": "start-here",
+        "Id": "org.cachy7.startmenu",
+        "License": "GPL-2.0-or-later",
+        "Name": "Cachy7 Start Menu",
+        "Version": "1.0"
+    },
+    "X-Plasma-API-Minimum-Version": "6.0",
+    "X-Plasma-Provides": [
+        "org.kde.plasma.launchermenu"
+    ]
+}

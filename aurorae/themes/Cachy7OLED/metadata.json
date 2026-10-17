@@ -1,0 +1,14 @@
+{
+  "KPlugin": {
+    "Authors": [
+      {
+        "Name": "Cachy7 OLED"
+      }
+    ],
+    "Id": "Cachy7OLED",
+    "Name": "Cachy7 OLED",
+    "Description": "Windows 7 Aero inspired glass frame on OLED black",
+    "License": "GPL-2.0-or-later",
+    "Version": "1.0"
+  }
+}

@@ -1,0 +1,11 @@
+post_install() {
+    echo ":: Cachy7 OLED installed. As your normal user, run:"
+    echo "::   cachy7-oled apply --layout     (or without --layout to keep your panel)"
+    echo "::   cachy7-oled revert             (puts your old setup back)"
+}
+post_upgrade() {
+    echo ":: Cachy7 OLED updated. Log out and back in to load the new version."
+}
+pre_remove() {
+    echo ":: Before removing, each user who applied the theme should run: cachy7-oled revert"
+}

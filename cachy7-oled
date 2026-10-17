@@ -1,0 +1,410 @@
+#!/usr/bin/env bash
+# cachy7-oled - install, apply and cleanly undo the Cachy7 OLED Plasma theme.
+#
+#   cachy7-oled install [--layout|--no-layout] [--logo FILE] [--no-apply]
+#   cachy7-oled apply   [--layout]     switch to the theme (snapshots your setup first)
+#   cachy7-oled revert                 put back exactly what you had before 'apply'
+#   cachy7-oled uninstall              revert + delete the theme files
+#   cachy7-oled status                 what's installed / applied / backed up
+#
+# Everything is per-user unless installed with the PKGBUILD (then files live in /usr/share).
+set -u
+
+VERSION=1.1
+DATA="${XDG_DATA_HOME:-$HOME/.local/share}"
+CONF="${XDG_CONFIG_HOME:-$HOME/.config}"
+STATE="$DATA/cachy7-oled"
+SNAP="$STATE/snapshot"
+AUTOSTART="$CONF/autostart/cachy7-oled-apply.desktop"
+SELF="$(readlink -f "${BASH_SOURCE[0]}")"
+SRC="$(dirname "$SELF")"
+uid="$(id -u)"
+
+# Config files the theme can change. A copy of each is taken before the first apply.
+SNAP_FILES=(
+    kdeglobals plasmarc kwinrc ksplashrc kcminputrc
+    plasma-org.kde.plasma.desktop-appletsrc plasmashellrc
+    gtk-3.0/settings.ini gtk-4.0/settings.ini
+)
+
+# theme parts: <path relative to a data dir>
+PARTS=(
+    color-schemes/Cachy7OLED.colors
+    plasma/desktoptheme/cachy7-oled
+    plasma/plasmoids/org.cachy7.startmenu
+    plasma/look-and-feel/org.cachy7.oled.desktop
+    aurorae/themes/Cachy7OLED
+    icons/Cachy7
+    wallpapers/Cachy7OLED
+)
+
+c_say() { printf '\033[1;36m::\033[0m %s\n' "$*"; }
+c_warn() { printf '\033[1;33m!!\033[0m %s\n' "$*" >&2; }
+c_die() { printf '\033[1;31mxx\033[0m %s\n' "$*" >&2; exit 1; }
+have() { command -v "$1" >/dev/null 2>&1; }
+
+KW=kwriteconfig6
+have "$KW" || KW=kwriteconfig5
+
+# Over SSH there's usually no session bus in the environment; borrow the desktop's.
+if [ -z "${DBUS_SESSION_BUS_ADDRESS:-}" ] && [ -S "/run/user/$uid/bus" ]; then
+    export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$uid/bus"
+fi
+
+plasma_running() { pgrep -u "$uid" -x plasmashell >/dev/null 2>&1; }
+dbus_call() { have dbus-send && dbus-send --session --type=method_call "$@" >/dev/null 2>&1; }
+
+# read_ini FILE GROUP KEY  (no KDE tools needed)
+read_ini() {
+    [ -f "$1" ] || return 0
+    awk -v g="[$2]" -v k="$3" '
+        /^\[/ { ing = ($0 == g); next }
+        ing { i = index($0, "="); if (i && substr($0, 1, i - 1) == k) { print substr($0, i + 1); exit } }
+    ' "$1"
+}
+
+# Where are the theme files? user dir first, then system (pacman package).
+theme_root() {
+    if [ -d "$DATA/plasma/plasmoids/org.cachy7.startmenu" ]; then echo "$DATA"
+    elif [ -d /usr/share/plasma/plasmoids/org.cachy7.startmenu ]; then echo /usr/share
+    fi
+}
+
+cli_path() {
+    if [ -x "$HOME/.local/bin/cachy7-oled" ]; then echo "$HOME/.local/bin/cachy7-oled"
+    elif have cachy7-oled; then command -v cachy7-oled
+    else echo "$SELF"
+    fi
+}
+
+# ---------------------------------------------------------------------------
+# logo
+# ---------------------------------------------------------------------------
+find_logo() {
+    local osname="" c n d ext
+    [ -r /etc/os-release ] && osname="$(. /etc/os-release && echo "${LOGO:-}")"
+    local names=()
+    [ -n "$osname" ] && names+=("$osname")
+    names+=(cachyos distributor-logo-cachyos cachyos-logo start-here-cachyos)
+    local dirs=(/usr/share/pixmaps
+                /usr/share/icons/hicolor/scalable/apps /usr/share/icons/hicolor/scalable/places
+                /usr/share/icons/hicolor/512x512/apps /usr/share/icons/hicolor/256x256/apps
+                /usr/share/icons/hicolor/128x128/apps /usr/share/icons)
+    for ext in svg png; do
+        for n in "${names[@]}"; do
+            for d in "${dirs[@]}"; do
+                c="$d/$n.$ext"
+                if [ -f "$c" ]; then echo "$c"; return 0; fi
+            done
+        done
+    done
+    c="$(find /usr/share/icons /usr/share/pixmaps /usr/share/cachyos* /usr/share/plasma/look-and-feel \
+            -type f \( -iname '*cachyos*.svg' -o -iname '*cachyos*.png' \) ! -iname '*symbolic*' \
+            2>/dev/null | awk '{ print (/\.svg$/ ? 0 : 1) "\t" $0 }' | sort | head -1 | cut -f2-)"
+    [ -n "$c" ] && echo "$c"
+    return 0
+}
+
+put_logo() {  # DEST_DATA_DIR LOGO_FILE
+    local dest="$1" logo="$2" ext n
+    ext="${logo##*.}"; ext="$(echo "$ext" | tr 'A-Z' 'a-z')"
+    rm -f "$dest/plasma/plasmoids/org.cachy7.startmenu/contents/images/logo."{svg,png}
+    rm -f "$dest/plasma/look-and-feel/org.cachy7.oled.desktop/contents/splash/images/logo."{svg,png}
+    cp "$logo" "$dest/plasma/plasmoids/org.cachy7.startmenu/contents/images/logo.$ext"
+    cp "$logo" "$dest/plasma/look-and-feel/org.cachy7.oled.desktop/contents/splash/images/logo.$ext"
+    for n in start-here start-here-kde start-here-kde-plasma distributor-logo; do
+        rm -f "$dest/icons/Cachy7/scalable/places/$n."{svg,png}
+        cp "$logo" "$dest/icons/Cachy7/scalable/places/$n.$ext"
+    done
+}
+
+# ---------------------------------------------------------------------------
+# install-files: copy the theme into a data dir (used by 'install' and the PKGBUILD)
+# ---------------------------------------------------------------------------
+cmd_install_files() {
+    local dest="$DATA" bin="" logo="auto" p
+    while [ $# -gt 0 ]; do
+        case "$1" in
+            --dest) shift; dest="$1" ;;
+            --bin) shift; bin="$1" ;;
+            --logo) shift; logo="$1" ;;
+        esac
+        shift
+    done
+    [ -d "$SRC/plasma/plasmoids/org.cachy7.startmenu" ] || c_die "run this from the unpacked Cachy7-OLED folder"
+
+    c_say "Copying theme files into $dest"
+    for p in "${PARTS[@]}"; do
+        rm -rf "${dest:?}/$p"
+        mkdir -p "$(dirname "$dest/$p")"
+        cp -r "$SRC/$p" "$dest/$p"
+    done
+    if [ -n "$bin" ]; then
+        mkdir -p "$bin"
+        install -m755 "$SELF" "$bin/cachy7-oled"
+    fi
+
+    [ "$logo" = auto ] && logo="$(find_logo)"
+    if [ -n "$logo" ] && [ -f "$logo" ]; then
+        c_say "CachyOS logo: $logo"
+        put_logo "$dest" "$logo"
+    else
+        c_warn "No CachyOS logo found; the orb uses its built-in glyph (use --logo FILE to pick one)."
+    fi
+    have gtk-update-icon-cache && gtk-update-icon-cache -q -f -t "$dest/icons/Cachy7" 2>/dev/null
+    return 0
+}
+
+# ---------------------------------------------------------------------------
+# snapshot / restore
+# ---------------------------------------------------------------------------
+take_snapshot() {
+    if [ -f "$SNAP/taken" ]; then
+        c_say "Keeping your original backup from $(cat "$SNAP/taken")"
+        return 0
+    fi
+    c_say "Backing up your current desktop setup"
+    rm -rf "$SNAP"
+    mkdir -p "$SNAP/files"
+    : > "$SNAP/missing.list"
+    local f
+    for f in "${SNAP_FILES[@]}"; do
+        if [ -f "$CONF/$f" ]; then
+            mkdir -p "$SNAP/files/$(dirname "$f")"
+            cp -p "$CONF/$f" "$SNAP/files/$f"
+        else
+            echo "$f" >> "$SNAP/missing.list"
+        fi
+    done
+    date '+%Y-%m-%d %H:%M' > "$SNAP/taken"
+}
+
+stop_plasmashell() {
+    if have systemctl && systemctl --user is-active --quiet plasma-plasmashell.service 2>/dev/null; then
+        systemctl --user stop plasma-plasmashell.service
+    elif have kquitapp6; then
+        kquitapp6 plasmashell >/dev/null 2>&1
+    else
+        pkill -u "$uid" -x plasmashell
+    fi
+    local i
+    for i in $(seq 1 40); do plasma_running || return 0; sleep 0.25; done
+    pkill -u "$uid" -x plasmashell; sleep 1
+}
+
+start_plasmashell() {
+    if have systemctl && systemctl --user cat plasma-plasmashell.service >/dev/null 2>&1; then
+        systemctl --user start plasma-plasmashell.service
+    elif have kstart; then
+        kstart plasmashell >/dev/null 2>&1
+    else
+        (setsid plasmashell >/dev/null 2>&1 &)
+    fi
+}
+
+cmd_revert() {
+    [ -f "$SNAP/taken" ] || { c_warn "No backup found - nothing to revert (theme was never applied by this tool)."; return 1; }
+    local was_running=0 f
+    plasma_running && was_running=1
+    c_say "Restoring your setup from $(cat "$SNAP/taken")"
+    # plasmashell rewrites its panel config when it exits, so stop it before restoring
+    [ "$was_running" = 1 ] && stop_plasmashell
+
+    for f in "${SNAP_FILES[@]}"; do
+        if [ -f "$SNAP/files/$f" ]; then
+            mkdir -p "$(dirname "$CONF/$f")"
+            cp -p "$SNAP/files/$f" "$CONF/$f"
+        fi
+    done
+    while IFS= read -r f; do
+        [ -n "$f" ] && rm -f "$CONF/$f"
+    done < "$SNAP/missing.list"
+    rm -f "$AUTOSTART"
+    rmdir "$(dirname "$AUTOSTART")" 2>/dev/null
+
+    if [ "$was_running" = 1 ]; then
+        start_plasmashell
+        dbus_call --dest=org.kde.KWin /KWin org.kde.KWin.reconfigure
+        local icons
+        icons="$(read_ini "$CONF/kdeglobals" Icons Theme)"
+        for ci in /usr/lib/plasma-changeicons /usr/libexec/plasma-changeicons /usr/lib/*/libexec/plasma-changeicons; do
+            if [ -x "$ci" ]; then "$ci" "${icons:-breeze}" >/dev/null 2>&1; break; fi
+        done
+    fi
+    rm -rf "$SNAP"
+    c_say "Reverted. Log out and back in so already-open apps pick up your old colors."
+}
+
+# ---------------------------------------------------------------------------
+# apply
+# ---------------------------------------------------------------------------
+cmd_apply() {
+    local layout=0 deferred=0
+    for a in "$@"; do
+        case "$a" in
+            --layout) layout=1 ;;
+            --deferred) deferred=1 ;;
+        esac
+    done
+    local root
+    root="$(theme_root)"
+    [ -n "$root" ] || c_die "theme files not installed - run 'cachy7-oled install' first"
+
+    if [ "$deferred" = 1 ]; then
+        for _ in $(seq 1 60); do plasma_running && break; sleep 1; done
+        sleep 4
+    fi
+
+    take_snapshot
+
+    c_say "Color scheme"
+    if have plasma-apply-colorscheme; then
+        plasma-apply-colorscheme Cachy7OLED >/dev/null 2>&1 || $KW --file kdeglobals --group General --key ColorScheme Cachy7OLED
+    else
+        $KW --file kdeglobals --group General --key ColorScheme Cachy7OLED
+    fi
+
+    c_say "Plasma style"
+    if have plasma-apply-desktoptheme; then
+        plasma-apply-desktoptheme cachy7-oled >/dev/null 2>&1 || $KW --file plasmarc --group Theme --key name cachy7-oled
+    else
+        $KW --file plasmarc --group Theme --key name cachy7-oled
+    fi
+
+    c_say "Icons"
+    $KW --file kdeglobals --group Icons --key Theme Cachy7
+    for ci in /usr/lib/plasma-changeicons /usr/libexec/plasma-changeicons /usr/lib/*/libexec/plasma-changeicons; do
+        if [ -x "$ci" ]; then "$ci" Cachy7 >/dev/null 2>&1; break; fi
+    done
+
+    c_say "Window decoration + Win7 button order"
+    $KW --file kwinrc --group org.kde.kdecoration2 --key library org.kde.kwin.aurorae
+    $KW --file kwinrc --group org.kde.kdecoration2 --key theme __aurorae__svg__Cachy7OLED
+    $KW --file kwinrc --group org.kde.kdecoration2 --key ButtonsOnLeft M
+    $KW --file kwinrc --group org.kde.kdecoration2 --key ButtonsOnRight IAX
+    $KW --file kwinrc --group TabBox --key LayoutName thumbnail_grid
+
+    c_say "Boot splash"
+    $KW --file ksplashrc --group KSplash --key Engine KSplashQML
+    $KW --file ksplashrc --group KSplash --key Theme org.cachy7.oled.desktop
+
+    if plasma_running; then
+        if [ "$layout" = 1 ] && have plasma-apply-lookandfeel; then
+            c_say "Windows 7 taskbar layout"
+            plasma-apply-lookandfeel --apply org.cachy7.oled.desktop --resetLayout >/dev/null 2>&1 \
+                || c_warn "plasma-apply-lookandfeel failed; pick 'Cachy7 OLED' in System Settings > Global Theme"
+            sleep 2
+        fi
+        c_say "Wallpaper"
+        have plasma-apply-wallpaperimage && \
+            { plasma-apply-wallpaperimage "$root/wallpapers/Cachy7OLED/contents/images/3840x2160.png" >/dev/null 2>&1 \
+              || c_warn "could not set wallpaper"; }
+        $KW --file kwinrc --group org.kde.kdecoration2 --key ButtonsOnRight IAX
+        dbus_call --dest=org.kde.KWin /KWin org.kde.KWin.reconfigure
+        rm -f "$AUTOSTART"
+        c_say "Applied. Undo any time with:  cachy7-oled revert"
+    else
+        mkdir -p "$(dirname "$AUTOSTART")"
+        local args="apply --deferred"
+        [ "$layout" = 1 ] && args="$args --layout"
+        cat > "$AUTOSTART" <<EOF
+[Desktop Entry]
+Type=Application
+Name=Cachy7 OLED (finish applying theme)
+Exec=/bin/bash $(cli_path) $args
+OnlyShowIn=KDE;
+X-KDE-autostart-phase=2
+NoDisplay=true
+EOF
+        c_say "Plasma desktop isn't running (gaming mode?). Settings are saved; the rest"
+        c_say "finishes automatically next time you enter desktop mode. Undo: cachy7-oled revert"
+    fi
+}
+
+# ---------------------------------------------------------------------------
+cmd_install() {
+    local layout=ask apply=1 logo=auto
+    while [ $# -gt 0 ]; do
+        case "$1" in
+            --layout) layout=1 ;;
+            --no-layout) layout=0 ;;
+            --no-apply) apply=0 ;;
+            --logo) shift; logo="${1:-auto}" ;;
+            *) c_die "unknown option: $1" ;;
+        esac
+        shift
+    done
+    cmd_install_files --dest "$DATA" --bin "$HOME/.local/bin" --logo "$logo"
+    case ":$PATH:" in
+        *":$HOME/.local/bin:"*) ;;
+        *) c_warn "$HOME/.local/bin isn't in your PATH; the command is $HOME/.local/bin/cachy7-oled" ;;
+    esac
+    [ "$apply" = 0 ] && { c_say "Installed. Switch to it with: cachy7-oled apply [--layout]"; return 0; }
+
+    if [ "$layout" = ask ]; then
+        layout=0
+        if [ -t 0 ]; then
+            printf '\033[1;36m::\033[0m Also switch your panel to the Windows 7 taskbar? (revert restores your current one) [y/N] '
+            read -r ans || ans=""
+            case "$ans" in y|Y|yes|YES) layout=1 ;; esac
+        fi
+    fi
+    if [ "$layout" = 1 ]; then cmd_apply --layout; else
+        cmd_apply
+        c_say "Panel left alone. Add the orb: right-click panel > Add Widgets > 'Cachy7 Start Menu'."
+    fi
+}
+
+cmd_uninstall() {
+    if [ -f "$SNAP/taken" ]; then
+        cmd_revert
+    elif [ "$(read_ini "$CONF/plasmarc" Theme name)" = cachy7-oled ]; then
+        c_warn "No backup to restore; switching to Breeze Dark instead."
+        have plasma-apply-lookandfeel && plasma_running && plasma-apply-lookandfeel --apply org.kde.breezedark.desktop >/dev/null 2>&1
+        $KW --file kdeglobals --group General --key ColorScheme BreezeDark
+        $KW --file plasmarc --group Theme --key name breeze-dark
+        $KW --file kdeglobals --group Icons --key Theme breeze-dark
+        $KW --file kwinrc --group org.kde.kdecoration2 --key library org.kde.breeze
+        $KW --file kwinrc --group org.kde.kdecoration2 --key theme Breeze
+        $KW --file kwinrc --group TabBox --key LayoutName org.kde.breeze.desktop
+        $KW --file ksplashrc --group KSplash --key Theme org.kde.breeze.desktop
+        dbus_call --dest=org.kde.KWin /KWin org.kde.KWin.reconfigure
+    fi
+    c_say "Removing theme files"
+    local p
+    for p in "${PARTS[@]}"; do rm -rf "${DATA:?}/$p"; done
+    rm -f "$AUTOSTART" "$HOME/.local/bin/cachy7-oled"
+    rm -rf "$STATE"
+    if [ -d /usr/share/plasma/plasmoids/org.cachy7.startmenu ]; then
+        c_say "System package still installed. Remove it with:  sudo pacman -R cachy7-oled-theme"
+    fi
+    c_say "Uninstalled."
+}
+
+cmd_status() {
+    local root applied
+    root="$(theme_root)"
+    echo "Cachy7 OLED $VERSION"
+    echo "  files:    ${root:-not installed}"
+    applied="$(read_ini "$CONF/plasmarc" Theme name)"
+    if [ "$applied" = cachy7-oled ]; then echo "  applied:  yes"; else echo "  applied:  no (Plasma style: ${applied:-default})"; fi
+    if [ -f "$SNAP/taken" ]; then echo "  backup:   your setup from $(cat "$SNAP/taken") - 'cachy7-oled revert' restores it"
+    else echo "  backup:   none"; fi
+    [ -f "$AUTOSTART" ] && echo "  pending:  will finish applying at next desktop login"
+    plasma_running && echo "  desktop:  running" || echo "  desktop:  not running"
+    return 0
+}
+
+usage() { sed -n '2,10p' "$SELF" | sed 's/^# \{0,1\}//'; }
+
+cmd="${1:-help}"; [ $# -gt 0 ] && shift
+case "$cmd" in
+    install) cmd_install "$@" ;;
+    install-files) cmd_install_files "$@" ;;
+    apply) cmd_apply "$@" ;;
+    revert|restore) cmd_revert ;;
+    uninstall|remove) cmd_uninstall ;;
+    status) cmd_status ;;
+    version|--version) echo "$VERSION" ;;
+    *) usage ;;
+esac

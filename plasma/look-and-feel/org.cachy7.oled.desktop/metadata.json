@@ -1,0 +1,18 @@
+{
+    "KPackageStructure": "Plasma/LookAndFeel",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "Cachy7 OLED"
+            }
+        ],
+        "Category": "",
+        "Description": "Windows 7 Aero inspired desktop on OLED black, with the CachyOS logo where the Windows logo used to be",
+        "Id": "org.cachy7.oled.desktop",
+        "License": "GPL-2.0-or-later",
+        "Name": "Cachy7 OLED",
+        "Version": "1.0"
+    },
+    "Keywords": "Desktop;Workspace;Appearance;Look and Feel;Windows 7;Aero;OLED;CachyOS",
+    "X-Plasma-APIVersion": "2"
+}

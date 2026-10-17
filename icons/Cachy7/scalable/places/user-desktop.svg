@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="48" height="48" viewBox="0 0 48 48">
+<defs><radialGradient id="r1" gradientUnits="userSpaceOnUse" cx="24" cy="42.6" r="20" gradientTransform="translate(24 42.6) scale(1 0.11) translate(-24 -42.6)"><stop offset="0" stop-color="#000000" stop-opacity="0.5"/><stop offset="1" stop-color="#000000" stop-opacity="0"/></radialGradient><linearGradient id="g2" gradientUnits="userSpaceOnUse" x1="0" y1="7" x2="0" y2="42"><stop offset="0" stop-color="#e8b84a" stop-opacity="1"/><stop offset="1" stop-color="#b07a1c" stop-opacity="1"/></linearGradient><linearGradient id="g3" gradientUnits="userSpaceOnUse" x1="12" y1="10.5" x2="36" y2="25.5"><stop offset="0" stop-color="#0b3c91" stop-opacity="1"/><stop offset="0.6" stop-color="#2c86e6" stop-opacity="1"/><stop offset="1" stop-color="#7fd0ff" stop-opacity="1"/></linearGradient><linearGradient id="g4" gradientUnits="userSpaceOnUse" x1="0" y1="19" x2="0" y2="42"><stop offset="0" stop-color="#fde9ad" stop-opacity="1"/><stop offset="0.55" stop-color="#f4cb5d" stop-opacity="1"/><stop offset="1" stop-color="#dea12b" stop-opacity="1"/></linearGradient><linearGradient id="g5" gradientUnits="userSpaceOnUse" x1="0" y1="19.6" x2="0" y2="29"><stop offset="0" stop-color="#ffffff" stop-opacity="0.55"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient></defs>
+<ellipse cx="24" cy="42.6" rx="20" ry="2.2" fill="url(#r1)"/>
+<path d="M6,7.5 h11 a1.5,1.5 0 0 1 1.2,0.6 l2.4,3 h20.9 a2,2 0 0 1 2,2 v26.4 a2,2 0 0 1 -2,2 h-35.5 a2,2 0 0 1 -2,-2 v-30 a2,2 0 0 1 2,-2 z" fill="#6b4608"/>
+<path d="M6.3,8.3 h10.5 a1.2,1.2 0 0 1 1,0.5 l2.5,3.1 h21.2 a1.4,1.4 0 0 1 1.4,1.4 v26.1 a1.4,1.4 0 0 1 -1.4,1.4 h-35.2 a1.4,1.4 0 0 1 -1.4,-1.4 v-29.7 a1.4,1.4 0 0 1 1.4,-1.4 z" fill="url(#g2)"/>
+<rect x="6.5" y="13.5" width="35" height="26" rx="1" fill="#5a3a06" fill-opacity="0.35"/>
+<rect x="11.4" y="9.9" width="25.2" height="16.2" rx="1" fill="#10151c"/>
+<rect x="12" y="10.5" width="24" height="15" fill="url(#g3)"/>
+<path d="M12,21 Q24,13.5 36,15.75 V18 Q24,16.5 12,25.5 Z" fill="#ffffff" fill-opacity="0.3"/>
+<path d="M4.5,18.8 h39 a1.6,1.6 0 0 1 1.6,1.8 l-1.9,18.6 a2,2 0 0 1 -2,1.8 h-34.4 a2,2 0 0 1 -2,-1.8 l-1.9,-18.6 a1.6,1.6 0 0 1 1.6,-1.8 z" fill="#7d5309"/>
+<path d="M4.7,19.6 h38.6 a1,1 0 0 1 1,1.1 l-1.85,18.4 a1.4,1.4 0 0 1 -1.4,1.3 h-34.1 a1.4,1.4 0 0 1 -1.4,-1.3 l-1.85,-18.4 a1,1 0 0 1 1,-1.1 z" fill="url(#g4)"/>
+<path d="M4.9,20.2 h38.2 l-0.9,8.6 q-18,-2.6 -36.4,0 z" fill="url(#g5)"/>
+<rect x="5.2" y="19.8" width="37.6" height="0.7" fill="#ffffff" fill-opacity="0.85"/>
+</svg>

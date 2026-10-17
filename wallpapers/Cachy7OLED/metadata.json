@@ -1,0 +1,12 @@
+{
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "Cachy7 OLED"
+            }
+        ],
+        "Id": "Cachy7OLED",
+        "License": "CC-BY-SA-4.0",
+        "Name": "Cachy7 OLED Aurora"
+    }
+}

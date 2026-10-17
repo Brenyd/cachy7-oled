@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="48" height="48" viewBox="0 0 48 48">
+<defs><radialGradient id="r1" gradientUnits="userSpaceOnUse" cx="24" cy="44" r="19" gradientTransform="translate(24 44) scale(1 0.105) translate(-24 -44)"><stop offset="0" stop-color="#000000" stop-opacity="0.5"/><stop offset="1" stop-color="#000000" stop-opacity="0"/></radialGradient><radialGradient id="r2" gradientUnits="userSpaceOnUse" cx="20.1" cy="13.45" r="17.55"><stop offset="0" stop-color="#9fe0ff" stop-opacity="1"/><stop offset="0.55" stop-color="#2b8be0" stop-opacity="1"/><stop offset="1" stop-color="#0b3c8a" stop-opacity="1"/></radialGradient><linearGradient id="g3" gradientUnits="userSpaceOnUse" x1="0" y1="5" x2="0" y2="31"><stop offset="0" stop-color="#a8ef6b" stop-opacity="1"/><stop offset="1" stop-color="#2f9b2f" stop-opacity="1"/></linearGradient><linearGradient id="g4" gradientUnits="userSpaceOnUse" x1="0" y1="5" x2="0" y2="19.3"><stop offset="0" stop-color="#ffffff" stop-opacity="0.7"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient><linearGradient id="g5" gradientUnits="userSpaceOnUse" x1="7" y1="30" x2="18" y2="37.5"><stop offset="0" stop-color="#0b3c91" stop-opacity="1"/><stop offset="0.6" stop-color="#2c86e6" stop-opacity="1"/><stop offset="1" stop-color="#7fd0ff" stop-opacity="1"/></linearGradient><linearGradient id="g6" gradientUnits="userSpaceOnUse" x1="31" y1="30" x2="42" y2="37.5"><stop offset="0" stop-color="#0b3c91" stop-opacity="1"/><stop offset="0.6" stop-color="#2c86e6" stop-opacity="1"/><stop offset="1" stop-color="#7fd0ff" stop-opacity="1"/></linearGradient></defs>
+<ellipse cx="24" cy="44" rx="19" ry="2" fill="url(#r1)"/>
+<circle cx="24" cy="18" r="13.6" fill="#062a5c"/>
+<circle cx="24" cy="18" r="13" fill="url(#r2)"/>
+<path d="M14.9,11.5 C18.8,7.6 22.7,8.9 24,11.5 C25.3,14.1 21.4,15.4 22.7,18 C24,20.6 20.1,23.2 18.8,27.1 C14.9,23.2 12.3,16.7 14.9,11.5 Z" fill="url(#g3)"/>
+<path d="M26.6,7.6 C30.5,7.6 34.4,11.5 34.4,15.4 C31.8,16.7 30.5,19.3 31.8,21.9 C30.5,25.8 26.6,27.1 26.6,23.2 C27.9,20.6 25.3,18 26.6,15.4 C27.9,12.8 25.3,10.2 26.6,7.6 Z" fill="url(#g3)"/>
+<ellipse cx="24" cy="12.54" rx="9.36" ry="6.24" fill="url(#g4)"/>
+<rect x="6.4" y="29.4" width="12.2" height="8.7" rx="1" fill="#10151c"/>
+<rect x="7" y="30" width="11" height="7.5" fill="url(#g5)"/>
+<path d="M7,35.25 Q12.5,31.5 18,32.625 V33.75 Q12.5,33 7,37.5 Z" fill="#ffffff" fill-opacity="0.3"/>
+<rect x="30.4" y="29.4" width="12.2" height="8.7" rx="1" fill="#10151c"/>
+<rect x="31" y="30" width="11" height="7.5" fill="url(#g6)"/>
+<path d="M31,35.25 Q36.5,31.5 42,32.625 V33.75 Q36.5,33 31,37.5 Z" fill="#ffffff" fill-opacity="0.3"/>
+<path d="M12.5,30 V27 H35.5 V30" fill="none" stroke="#9fb8d0" stroke-width="1.2"/>
+</svg>

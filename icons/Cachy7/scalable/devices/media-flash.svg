@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="48" height="48" viewBox="0 0 48 48">
+<defs><radialGradient id="r1" gradientUnits="userSpaceOnUse" cx="24" cy="43" r="12" gradientTransform="translate(24 43) scale(1 0.167) translate(-24 -43)"><stop offset="0" stop-color="#000000" stop-opacity="0.5"/><stop offset="1" stop-color="#000000" stop-opacity="0"/></radialGradient><linearGradient id="g2" gradientUnits="userSpaceOnUse" x1="14" y1="0" x2="34" y2="0"><stop offset="0" stop-color="#4ea6ff" stop-opacity="1"/><stop offset="0.48" stop-color="#1d6fd0" stop-opacity="1"/><stop offset="0.5" stop-color="#0e4fa0" stop-opacity="1"/><stop offset="1" stop-color="#2b7fe0" stop-opacity="1"/></linearGradient></defs>
+<ellipse cx="24" cy="43" rx="12" ry="2" fill="url(#r1)"/>
+<rect x="18" y="4" width="12" height="11" rx="1" fill="#c9cfd6" stroke="#6c747e" stroke-width="0.7"/>
+<rect x="20.5" y="7" width="2.5" height="2.5" fill="#5c636c"/><rect x="25" y="7" width="2.5" height="2.5" fill="#5c636c"/>
+<rect x="14" y="14" width="20" height="28" rx="4" fill="url(#g2)" stroke="#062f66" stroke-width="0.8"/>
+<rect x="15.5" y="15.5" width="8" height="25" rx="3" fill="#ffffff" fill-opacity="0.22"/>
+<circle cx="24" cy="36" r="1.4" fill="#9ff0ff"/>
+</svg>

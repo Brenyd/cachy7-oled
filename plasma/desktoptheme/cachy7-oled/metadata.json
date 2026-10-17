@@ -1,0 +1,15 @@
+{
+  "KPlugin": {
+    "Authors": [
+      {
+        "Name": "Cachy7 OLED"
+      }
+    ],
+    "Description": "Windows 7 Aero inspired glass taskbar on an OLED-black base, with a CachyOS twist",
+    "Id": "cachy7-oled",
+    "License": "GPL-2.0-or-later",
+    "Name": "Cachy7 OLED",
+    "Version": "1.0"
+  },
+  "X-Plasma-API-Minimum-Version": "6.0"
+}

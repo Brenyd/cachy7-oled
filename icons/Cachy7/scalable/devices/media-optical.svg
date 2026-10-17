@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="48" height="48" viewBox="0 0 48 48">
+<defs><radialGradient id="r1" gradientUnits="userSpaceOnUse" cx="24" cy="44" r="16" gradientTransform="translate(24 44) scale(1 0.125) translate(-24 -44)"><stop offset="0" stop-color="#000000" stop-opacity="0.45"/><stop offset="1" stop-color="#000000" stop-opacity="0"/></radialGradient><radialGradient id="r2" gradientUnits="userSpaceOnUse" cx="18.3" cy="17.8" r="26.6"><stop offset="0" stop-color="#ffffff" stop-opacity="1"/><stop offset="0.45" stop-color="#d7dde6" stop-opacity="1"/><stop offset="1" stop-color="#9aa6b5" stop-opacity="1"/></radialGradient><linearGradient id="g3" gradientUnits="userSpaceOnUse" x1="5" y1="4.5" x2="43" y2="42.5"><stop offset="0" stop-color="#ff9ad5" stop-opacity="0"/><stop offset="0.35" stop-color="#8fd3ff" stop-opacity="0.55"/><stop offset="0.5" stop-color="#b9ff9a" stop-opacity="0.5"/><stop offset="0.65" stop-color="#ffe28a" stop-opacity="0.55"/><stop offset="1" stop-color="#ff9ad5" stop-opacity="0"/></linearGradient></defs>
+<ellipse cx="24" cy="44" rx="16" ry="2" fill="url(#r1)"/>
+<circle cx="24" cy="23.5" r="19.5" fill="#5c6673"/>
+<circle cx="24" cy="23.5" r="19" fill="url(#r2)"/>
+<circle cx="24" cy="23.5" r="19" fill="url(#g3)"/>
+<circle cx="24" cy="23.5" r="5.7" fill="#e9edf2" stroke="#8b96a3" stroke-width="0.6"/>
+<circle cx="24" cy="23.5" r="2.28" fill="#3b4048"/>
+</svg>

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="48" height="48" viewBox="0 0 48 48">
+<defs><radialGradient id="r1" gradientUnits="userSpaceOnUse" cx="24" cy="44" r="15" gradientTransform="translate(24 44) scale(1 0.133) translate(-24 -44)"><stop offset="0" stop-color="#000000" stop-opacity="0.5"/><stop offset="1" stop-color="#000000" stop-opacity="0"/></radialGradient><linearGradient id="g2" gradientUnits="userSpaceOnUse" x1="0" y1="38" x2="0" y2="44"><stop offset="0" stop-color="#f4f6f8" stop-opacity="1"/><stop offset="1" stop-color="#8b949e" stop-opacity="1"/></linearGradient><linearGradient id="g3" gradientUnits="userSpaceOnUse" x1="20" y1="0" x2="28" y2="0"><stop offset="0" stop-color="#5c636c" stop-opacity="1"/><stop offset="0.5" stop-color="#c9cfd6" stop-opacity="1"/><stop offset="1" stop-color="#5c636c" stop-opacity="1"/></linearGradient><linearGradient id="g4" gradientUnits="userSpaceOnUse" x1="0" y1="5" x2="0" y2="36"><stop offset="0" stop-color="#3a3f46" stop-opacity="1"/><stop offset="0.5" stop-color="#0d0f12" stop-opacity="1"/><stop offset="1" stop-color="#000000" stop-opacity="1"/></linearGradient><linearGradient id="g5" gradientUnits="userSpaceOnUse" x1="6" y1="8" x2="42" y2="32"><stop offset="0" stop-color="#0a2d73" stop-opacity="1"/><stop offset="0.55" stop-color="#1e6fd0" stop-opacity="1"/><stop offset="1" stop-color="#69c3ff" stop-opacity="1"/></linearGradient><linearGradient id="g6" gradientUnits="userSpaceOnUse" x1="0" y1="5" x2="0" y2="20"><stop offset="0" stop-color="#ffffff" stop-opacity="0.25"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient></defs>
+<ellipse cx="24" cy="44" rx="15" ry="2" fill="url(#r1)"/>
+<path d="M14,43.5 Q14,40 18,39.5 H30 Q34,40 34,43.5 Z" fill="url(#g2)" stroke="#4b525b" stroke-width="0.6"/>
+<rect x="20.5" y="34" width="7" height="6" fill="url(#g3)"/>
+<rect x="3" y="5" width="42" height="31" rx="2.5" fill="#000000"/>
+<rect x="3.6" y="5.6" width="40.8" height="29.8" rx="2" fill="url(#g4)"/>
+<rect x="6" y="8" width="36" height="24" fill="url(#g5)"/>
+<path d="M6,26 Q20,12 42,15 V19 Q22,17 6,32 Z" fill="#ffffff" fill-opacity="0.28"/>
+<path d="M6,30 Q24,18 42,22 V23.5 Q24,21 6,32 Z" fill="#19d3b4" fill-opacity="0.35"/>
+<path d="M3.6,7.6 a2,2 0 0 1 2,-2 h36.8 a2,2 0 0 1 2,2 v6 Q24,10 3.6,16 Z" fill="url(#g6)"/>
+<circle cx="24" cy="34" r="0.6" fill="#5ad1ff"/>
+</svg>

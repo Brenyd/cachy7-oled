@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
+      http://www.kde.org/standards/kcfg/1.0/kcfg.xsd">
+  <kcfgfile name=""/>
+  <group name="General">
+    <entry name="logo" type="String">
+      <label>Icon name or file path drawn inside the orb. Empty = CachyOS logo found at install time.</label>
+      <default></default>
+    </entry>
+    <entry name="favorites" type="StringList">
+      <label>Initial pinned applications</label>
+      <default>preferred://browser,org.kde.dolphin.desktop,org.kde.konsole.desktop,systemsettings.desktop</default>
+    </entry>
+    <entry name="favoritesPortedToKAstats" type="Bool">
+      <default>false</default>
+    </entry>
+    <entry name="showFrequent" type="Bool">
+      <label>Show frequently used applications under the pinned ones</label>
+      <default>true</default>
+    </entry>
+    <entry name="maxFrequent" type="Int">
+      <default>8</default>
+    </entry>
+  </group>
+</kcfg>

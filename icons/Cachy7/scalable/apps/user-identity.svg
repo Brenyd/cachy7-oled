@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="48" height="48" viewBox="0 0 48 48">
+<defs><radialGradient id="r1" gradientUnits="userSpaceOnUse" cx="24" cy="44" r="17" gradientTransform="translate(24 44) scale(1 0.118) translate(-24 -44)"><stop offset="0" stop-color="#000000" stop-opacity="0.5"/><stop offset="1" stop-color="#000000" stop-opacity="0"/></radialGradient><linearGradient id="g2" gradientUnits="userSpaceOnUse" x1="0" y1="4" x2="0" y2="44"><stop offset="0" stop-color="#ffffff" stop-opacity="1"/><stop offset="1" stop-color="#aeb7c2" stop-opacity="1"/></linearGradient><linearGradient id="g3" gradientUnits="userSpaceOnUse" x1="0" y1="7" x2="0" y2="41"><stop offset="0" stop-color="#1fe0c0" stop-opacity="1"/><stop offset="0.6" stop-color="#0d8f9a" stop-opacity="1"/><stop offset="1" stop-color="#0b3c74" stop-opacity="1"/></linearGradient></defs>
+<ellipse cx="24" cy="44" rx="17" ry="2" fill="url(#r1)"/>
+<rect x="4" y="4" width="40" height="40" rx="4" fill="url(#g2)" stroke="#4b525b" stroke-width="0.7"/>
+<rect x="7" y="7" width="34" height="34" rx="2" fill="url(#g3)"/>
+<circle cx="24" cy="21.5" r="6" fill="#ffffff" fill-opacity="0.92"/>
+<path d="M12.5,39.5 C12.5,28.75 17.75,27.5 24,27.5 C30.25,27.5 35.5,28.75 35.5,39.5 Z" fill="#ffffff" fill-opacity="0.92"/>
+<path d="M7,9 a2,2 0 0 1 2,-2 h30 a2,2 0 0 1 2,2 v8 Q24,12 7,22 Z" fill="#ffffff" fill-opacity="0.25"/>
+</svg>
