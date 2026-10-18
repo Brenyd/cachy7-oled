@@ -1,0 +1,856 @@
+[
+ {
+  "label": "Alacritty",
+  "icons": [
+   "Alacritty"
+  ]
+ },
+ {
+  "label": "Ark",
+  "icons": [
+   "ark",
+   "org.kde.ark"
+  ]
+ },
+ {
+  "label": "Audacity",
+  "icons": [
+   "org.audacityteam.Audacity",
+   "audacity"
+  ]
+ },
+ {
+  "label": "Baldur's Gate 3",
+  "icons": [
+   "steam_icon_1086940"
+  ]
+ },
+ {
+  "label": "BB Launcher",
+  "icons": [
+   "cachy7-app-bb_launcher"
+  ]
+ },
+ {
+  "label": "Boxes",
+  "icons": [
+   "org.gnome.Boxes"
+  ]
+ },
+ {
+  "label": "Brave",
+  "icons": [
+   "brave-desktop",
+   "brave-browser",
+   "brave"
+  ]
+ },
+ {
+  "label": "Browning African Safari",
+  "icons": [
+   "cachy7-app-browning_african_safari"
+  ]
+ },
+ {
+  "label": "btop++",
+  "icons": [
+   "btop"
+  ]
+ },
+ {
+  "label": "Btrfs Assistant",
+  "icons": [
+   "btrfs-assistant"
+  ]
+ },
+ {
+  "label": "CachyOS Hello",
+  "icons": [
+   "org.cachyos.hello",
+   "cachyos-hello"
+  ]
+ },
+ {
+  "label": "CachyOS Kernel Manager",
+  "icons": [
+   "org.cachyos.KernelManager"
+  ]
+ },
+ {
+  "label": "CachyOS Package Installer",
+  "icons": [
+   "cachyos-pi"
+  ]
+ },
+ {
+  "label": "Cachy-Update",
+  "icons": [
+   "cachy-update-blue",
+   "cachy-update",
+   "arch-update"
+  ]
+ },
+ {
+  "label": "CoD: World at War",
+  "icons": [
+   "steam_icon_10090"
+  ]
+ },
+ {
+  "label": "chiaki-ng",
+  "icons": [
+   "io.github.streetpea.Chiaki4deck"
+  ]
+ },
+ {
+  "label": "CMake",
+  "icons": [
+   "CMakeSetup",
+   "cmake-gui",
+   "cmake"
+  ]
+ },
+ {
+  "label": "Creamlinux",
+  "icons": [
+   "cachy7-app-creamlinux"
+  ]
+ },
+ {
+  "label": "Crusader Kings III",
+  "icons": [
+   "steam_icon_1158310"
+  ]
+ },
+ {
+  "label": "CurseForge",
+  "icons": [
+   "cachy7-app-curseforge"
+  ]
+ },
+ {
+  "label": "Discord",
+  "icons": [
+   "discord"
+  ]
+ },
+ {
+  "label": "Dolphin Emulator",
+  "icons": [
+   "org.DolphinEmu.dolphin-emu"
+  ]
+ },
+ {
+  "label": "Dolphin",
+  "icons": [
+   "org.kde.dolphin",
+   "system-file-manager"
+  ]
+ },
+ {
+  "label": "Eden",
+  "icons": [
+   "cachy7-app-eden"
+  ]
+ },
+ {
+  "label": "eFootball",
+  "icons": [
+   "steam_icon_1665460"
+  ]
+ },
+ {
+  "label": "Emoji Selector",
+  "icons": [
+   "preferences-desktop-emoticons"
+  ]
+ },
+ {
+  "label": "Enderal",
+  "icons": [
+   "steam_icon_976620"
+  ]
+ },
+ {
+  "label": "Epic Games Launcher",
+  "icons": [
+   "cachy7-app-epic_games_launcher"
+  ]
+ },
+ {
+  "label": "Fallout 3",
+  "icons": [
+   "steam_icon_22370"
+  ]
+ },
+ {
+  "label": "Fallout 4 VR",
+  "icons": [
+   "steam_icon_611660"
+  ]
+ },
+ {
+  "label": "Fallout: New Vegas",
+  "icons": [
+   "steam_icon_22380"
+  ]
+ },
+ {
+  "label": "Filelight",
+  "icons": [
+   "filelight"
+  ]
+ },
+ {
+  "label": "File Roller",
+  "icons": [
+   "org.gnome.FileRoller",
+   "file-roller"
+  ]
+ },
+ {
+  "label": "Firefox",
+  "icons": [
+   "firefox"
+  ]
+ },
+ {
+  "label": "Flatseal",
+  "icons": [
+   "com.github.tchx84.Flatseal"
+  ]
+ },
+ {
+  "label": "Gang Beasts",
+  "icons": [
+   "steam_icon_285900"
+  ]
+ },
+ {
+  "label": "Gaupol",
+  "icons": [
+   "io.otsaloma.gaupol"
+  ]
+ },
+ {
+  "label": "Gear Lever",
+  "icons": [
+   "it.mijorus.gearlever"
+  ]
+ },
+ {
+  "label": "GIMP",
+  "icons": [
+   "gimp"
+  ]
+ },
+ {
+  "label": "Google Chrome",
+  "icons": [
+   "google-chrome"
+  ]
+ },
+ {
+  "label": "GParted",
+  "icons": [
+   "gparted"
+  ]
+ },
+ {
+  "label": "Grub Customizer",
+  "icons": [
+   "grub-customizer"
+  ]
+ },
+ {
+  "label": "guitarix",
+  "icons": [
+   "gx_head",
+   "guitarix"
+  ]
+ },
+ {
+  "label": "Gwenview",
+  "icons": [
+   "gwenview"
+  ]
+ },
+ {
+  "label": "lstopo",
+  "icons": [
+   "hwloc",
+   "lstopo"
+  ]
+ },
+ {
+  "label": "Haruna",
+  "icons": [
+   "haruna"
+  ]
+ },
+ {
+  "label": "Heroic Games Launcher",
+  "icons": [
+   "com.heroicgameslauncher.hgl"
+  ]
+ },
+ {
+  "label": "HP Device Manager",
+  "icons": [
+   "cachy7-app-hp_device_manager"
+  ]
+ },
+ {
+  "label": "HP Scan",
+  "icons": [
+   "cachy7-app-hp_scan"
+  ]
+ },
+ {
+  "label": "Hypnotix",
+  "icons": [
+   "hypnotix"
+  ]
+ },
+ {
+  "label": "Info Center",
+  "icons": [
+   "hwinfo"
+  ]
+ },
+ {
+  "label": "IPTVnator",
+  "icons": [
+   "cachy7-app-iptvnator"
+  ]
+ },
+ {
+  "label": "ISO Image Writer",
+  "icons": [
+   "org.kde.isoimagewriter"
+  ]
+ },
+ {
+  "label": "ISO Master",
+  "icons": [
+   "cachy7-app-isomaster"
+  ]
+ },
+ {
+  "label": "Jackify",
+  "icons": [
+   "com.jackify.app",
+   "cachy7-app-jackify"
+  ]
+ },
+ {
+  "label": "Kate",
+  "icons": [
+   "kate",
+   "org.kde.kate"
+  ]
+ },
+ {
+  "label": "KCalc",
+  "icons": [
+   "accessories-calculator",
+   "kcalc"
+  ]
+ },
+ {
+  "label": "KDE Connect",
+  "icons": [
+   "kdeconnect",
+   "org.kde.kdeconnect"
+  ]
+ },
+ {
+  "label": "KDE Partition Manager",
+  "icons": [
+   "partitionmanager"
+  ]
+ },
+ {
+  "label": "System Settings",
+  "icons": [
+   "preferences-system",
+   "systemsettings"
+  ]
+ },
+ {
+  "label": "Konsole",
+  "icons": [
+   "utilities-terminal",
+   "org.kde.konsole",
+   "konsole"
+  ]
+ },
+ {
+  "label": "KRDC",
+  "icons": [
+   "krdc"
+  ]
+ },
+ {
+  "label": "KRename",
+  "icons": [
+   "krename"
+  ]
+ },
+ {
+  "label": "KWalletManager",
+  "icons": [
+   "kwalletmanager"
+  ]
+ },
+ {
+  "label": "KWrite",
+  "icons": [
+   "kwrite"
+  ]
+ },
+ {
+  "label": "Lutris",
+  "icons": [
+   "net.lutris.Lutris",
+   "lutris"
+  ]
+ },
+ {
+  "label": "Manage Printing",
+  "icons": [
+   "cups"
+  ]
+ },
+ {
+  "label": "Mario Kart DX GP",
+  "icons": [
+   "cachy7-app-mario_kart_dx_gp"
+  ]
+ },
+ {
+  "label": "Meld",
+  "icons": [
+   "org.gnome.Meld",
+   "meld"
+  ]
+ },
+ {
+  "label": "melonDS",
+  "icons": [
+   "net.kuribo64.melonDS"
+  ]
+ },
+ {
+  "label": "Menu Editor",
+  "icons": [
+   "kmenuedit"
+  ]
+ },
+ {
+  "label": "Mesen",
+  "icons": [
+   "MesenIcon",
+   "mesen"
+  ]
+ },
+ {
+  "label": "Micro",
+  "icons": [
+   "micro"
+  ]
+ },
+ {
+  "label": "Minecraft Bedrock Launcher",
+  "icons": [
+   "io.mrarm.mcpelauncher"
+  ]
+ },
+ {
+  "label": "MKVToolNix",
+  "icons": [
+   "mkvtoolnix-gui"
+  ]
+ },
+ {
+  "label": "mpv",
+  "icons": [
+   "mpv"
+  ]
+ },
+ {
+  "label": "Nemo",
+  "icons": [
+   "nemo"
+  ]
+ },
+ {
+  "label": "OBS Studio",
+  "icons": [
+   "com.obsproject.Studio",
+   "obs"
+  ]
+ },
+ {
+  "label": "OpenMW CS",
+  "icons": [
+   "openmw-cs"
+  ]
+ },
+ {
+  "label": "OpenMW Launcher",
+  "icons": [
+   "openmw"
+  ]
+ },
+ {
+  "label": "Overcooked",
+  "icons": [
+   "steam_icon_448510"
+  ]
+ },
+ {
+  "label": "Parsec",
+  "icons": [
+   "cachy7-app-parsec",
+   "parsecd"
+  ]
+ },
+ {
+  "label": "PhotoCraft",
+  "icons": [
+   "ai.storyteller.photocraft",
+   "cachy7-app-photocraft"
+  ]
+ },
+ {
+  "label": "PipeASIO Settings",
+  "icons": [
+   "pipeasio"
+  ]
+ },
+ {
+  "label": "Plex",
+  "icons": [
+   "tv.plex.PlexDesktop"
+  ]
+ },
+ {
+  "label": "PortProton",
+  "icons": [
+   "ru.linux_gaming.PortProton"
+  ]
+ },
+ {
+  "label": "PPSSPP",
+  "icons": [
+   "org.ppsspp.PPSSPP"
+  ]
+ },
+ {
+  "label": "PrimeHack",
+  "icons": [
+   "io.github.shiiion.primehack"
+  ]
+ },
+ {
+  "label": "Private Internet Access",
+  "icons": [
+   "piavpn"
+  ]
+ },
+ {
+  "label": "Protontricks",
+  "icons": [
+   "com.github.Matoking.protontricks"
+  ]
+ },
+ {
+  "label": "ProtonUp-Qt",
+  "icons": [
+   "net.davidotek.pupgui2"
+  ]
+ },
+ {
+  "label": "PS5Upload",
+  "icons": [
+   "cachy7-app-ps5upload"
+  ]
+ },
+ {
+  "label": "qBittorrent",
+  "icons": [
+   "qbittorrent",
+   "org.qbittorrent.qBittorrent"
+  ]
+ },
+ {
+  "label": "qpwgraph",
+  "icons": [
+   "org.rncbc.qpwgraph",
+   "qpwgraph"
+  ]
+ },
+ {
+  "label": "Qt Assistant",
+  "icons": [
+   "assistant"
+  ]
+ },
+ {
+  "label": "Qt D-Bus Viewer",
+  "icons": [
+   "qdbusviewer"
+  ]
+ },
+ {
+  "label": "Qt Linguist",
+  "icons": [
+   "linguist"
+  ]
+ },
+ {
+  "label": "Qt V4L2 Test",
+  "icons": [
+   "qv4l2"
+  ]
+ },
+ {
+  "label": "Qt V4L2 Capture",
+  "icons": [
+   "qvidcap"
+  ]
+ },
+ {
+  "label": "Qt Widgets Designer",
+  "icons": [
+   "designer"
+  ]
+ },
+ {
+  "label": "Raft",
+  "icons": [
+   "steam_icon_648800"
+  ]
+ },
+ {
+  "label": "Refresher",
+  "icons": [
+   "cachy7-app-refresher"
+  ]
+ },
+ {
+  "label": "Remmina",
+  "icons": [
+   "org.remmina.Remmina",
+   "remmina"
+  ]
+ },
+ {
+  "label": "RetroArch",
+  "icons": [
+   "org.libretro.RetroArch",
+   "retroarch"
+  ]
+ },
+ {
+  "label": "Rocksmith 2014",
+  "icons": [
+   "steam_icon_221680"
+  ]
+ },
+ {
+  "label": "SchedExt Manager",
+  "icons": [
+   "org.cachyos.scx-manager"
+  ]
+ },
+ {
+  "label": "ScummVM",
+  "icons": [
+   "org.scummvm.ScummVM",
+   "scummvm"
+  ]
+ },
+ {
+  "label": "Shelly",
+  "icons": [
+   "shelly",
+   "com.shellyorg.shelly"
+  ]
+ },
+ {
+  "label": "Slippi Launcher",
+  "icons": [
+   "cachy7-app-slippi_launcher"
+  ]
+ },
+ {
+  "label": "Spectacle",
+  "icons": [
+   "spectacle"
+  ]
+ },
+ {
+  "label": "Spotify",
+  "icons": [
+   "spotify-client",
+   "spotify"
+  ]
+ },
+ {
+  "label": "Stardew Valley",
+  "icons": [
+   "steam_icon_413150"
+  ]
+ },
+ {
+  "label": "Steam",
+  "icons": [
+   "steam"
+  ]
+ },
+ {
+  "label": "SteamVR",
+  "icons": [
+   "steam_icon_250820"
+  ]
+ },
+ {
+  "label": "Supermodel",
+  "icons": [
+   "com.supermodel3.Supermodel"
+  ]
+ },
+ {
+  "label": "System Monitor",
+  "icons": [
+   "utilities-system-monitor",
+   "org.kde.plasma-systemmonitor"
+  ]
+ },
+ {
+  "label": "Tekno Parrot",
+  "icons": [
+   "cachy7-app-teknoparrot",
+   "teknoparrot"
+  ]
+ },
+ {
+  "label": "Tenacity",
+  "icons": [
+   "tenacity"
+  ]
+ },
+ {
+  "label": "TES: Arena",
+  "icons": [
+   "steam_icon_1812290"
+  ]
+ },
+ {
+  "label": "TES III: Morrowind",
+  "icons": [
+   "steam_icon_22320"
+  ]
+ },
+ {
+  "label": "TES V: Skyrim SE",
+  "icons": [
+   "steam_icon_489830"
+  ]
+ },
+ {
+  "label": "The Simpsons Game (Recomp)",
+  "icons": [
+   "cachy7-app-simpsons_recompiled"
+  ]
+ },
+ {
+  "label": "TinyWiiBackupManager",
+  "icons": [
+   "cachy7-app-tinywiibackupmanager"
+  ]
+ },
+ {
+  "label": "Unleashed Recompiled",
+  "icons": [
+   "io.github.hedge_dev.unleashedrecomp"
+  ]
+ },
+ {
+  "label": "UXTerm / XTerm",
+  "icons": [
+   "xterm-color_48x48",
+   "xterm"
+  ]
+ },
+ {
+  "label": "Valheim",
+  "icons": [
+   "steam_icon_892970"
+  ]
+ },
+ {
+  "label": "Vim",
+  "icons": [
+   "gvim",
+   "vim"
+  ]
+ },
+ {
+  "label": "Virtual Machine Manager",
+  "icons": [
+   "virt-manager"
+  ]
+ },
+ {
+  "label": "VLC",
+  "icons": [
+   "vlc"
+  ]
+ },
+ {
+  "label": "Volume Control",
+  "icons": [
+   "org.pulseaudio.pavucontrol",
+   "pavucontrol"
+  ]
+ },
+ {
+  "label": "vrmonitor",
+  "icons": [
+   "application-x-vrmonitor"
+  ]
+ },
+ {
+  "label": "WARDOGS",
+  "icons": [
+   "steam_icon_1867240"
+  ]
+ },
+ {
+  "label": "Waterpark Simulator",
+  "icons": [
+   "steam_icon_3293260"
+  ]
+ },
+ {
+  "label": "Wii Backup Fusion",
+  "icons": [
+   "cachy7-app-wii_backup_fusion"
+  ]
+ },
+ {
+  "label": "Winetricks",
+  "icons": [
+   "winetricks"
+  ]
+ },
+ {
+  "label": "xemu",
+  "icons": [
+   "app.xemu.xemu"
+  ]
+ }
+]
