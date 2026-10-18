@@ -1,0 +1,16 @@
+[Icon Theme]
+Name=Cachy7 Apps
+Comment=Cachy7 icons plus Win7-era glossy app icons
+Inherits=Cachy7,breeze-dark,breeze,hicolor
+Example=steam
+DisplayDepth=32
+FollowsColorScheme=false
+
+Directories=scalable/apps
+
+[scalable/apps]
+Size=48
+MinSize=16
+MaxSize=512
+Context=Applications
+Type=Scalable

@@ -15,7 +15,7 @@ had its flag logo shows the CachyOS logo instead.
 | Plasma style (glass taskbar, Win7 task buttons, glass popups) | `cachy7-oled` | Colors & Themes → Plasma Style |
 | Window decoration (Aero frame, Win7 caption buttons) | `Cachy7OLED` (Aurorae) | Colors & Themes → Window Decorations |
 | Icon theme (folders, Computer, Recycle-bin style trash, drives…) | `Cachy7` (inherits Breeze Dark) | Colors & Themes → Icons |
-| 136 app icons: glossy dark tiles with bright 80s-style emblems | part of `Cachy7` | automatic |
+| Optional: 136 app icons, glossy dark tiles with bright 80s-style emblems | `Cachy7 Apps` | `cachy7-oled app-icons on/off` |
 | Start menu widget with the CachyOS orb | `Cachy7 Start Menu` | Add Widgets |
 | Global theme + Win7 taskbar layout + "Starting CachyOS" splash | `Cachy7 OLED` | Colors & Themes → Global Theme / Splash Screen |
 | OLED aurora wallpaper | `Cachy7 OLED Aurora` | Wallpaper |
@@ -36,6 +36,9 @@ It asks whether to also swap your panel for the Windows 7 taskbar. To skip the q
 ./install.sh --layout      # yes, give me the Win7 taskbar
 ./install.sh --no-layout   # keep my current panel
 ```
+
+It also asks whether you want the Win7-style **app icons** (add `--app-icons` or
+`--no-app-icons` to skip the question). Both choices are remembered for updates.
 
 <details>
 <summary>No git? Download without it</summary>
@@ -81,6 +84,8 @@ cachy7-oled revert      # exactly your old desktop back, theme stays installed
 cachy7-oled apply       # switch to it again (add --layout for the taskbar)
 cachy7-oled uninstall   # revert + delete all theme files
 cachy7-oled status      # installed? applied? start menu on panel? backup from when?
+cachy7-oled app-icons on|off   # Win7-style app icons (off restores your app shortcuts too)
+cachy7-oled panel-height 34    # taskbar height in pixels (24-80)
 ```
 
 Re-applying or updating never overwrites that first backup, so `revert` always goes
@@ -110,8 +115,8 @@ Or right-click the orb → Configure Cachy7 Start Menu → *Orb logo* (icon name
 
 ## App icons
 
-Every app gets a Win7-era glossy tile with an original emblem of what it does (no brand
-logos are copied). Most apps pick them up automatically through the icon theme. Apps
+Optional (`cachy7-oled app-icons on`/`off`). Every app gets a Win7-era glossy tile with an original emblem of what it does (no brand
+logos are copied). They live in their own icon theme, *Cachy7 Apps*, which adds them on top of the base Cachy7 icons, so most apps pick them up automatically. Apps
 whose shortcut points at an image file (AppImages, some launchers) are re-pointed by
 `cachy7-oled apply`: your own shortcuts are backed up first, and system ones get a
 personal override, so `cachy7-oled revert` restores them exactly.

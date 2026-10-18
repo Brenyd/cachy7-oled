@@ -6,6 +6,8 @@
 #   cachy7-oled revert                 put back exactly what you had before 'apply'
 #   cachy7-oled uninstall              revert + delete the theme files
 #   cachy7-oled status                 what's installed / applied / backed up
+#   cachy7-oled app-icons on|off       Win7-style icons for your apps (optional)
+#   cachy7-oled panel-height [N]       taskbar height in px (default 34)
 #
 # Everything is per-user unless installed with the PKGBUILD (then files live in /usr/share).
 set -u
@@ -35,6 +37,7 @@ PARTS=(
     plasma/look-and-feel/org.cachy7.oled.desktop
     aurorae/themes/Cachy7OLED
     icons/Cachy7
+    icons/Cachy7-Apps
     wallpapers/Cachy7OLED
 )
 
@@ -163,6 +166,43 @@ revert_desktop_icons() {
     c_say "App shortcuts restored"
 }
 
+# ---------------------------------------------------------------------------
+# remembered choices (survive re-apply, updates and the deferred apply)
+# ---------------------------------------------------------------------------
+SETTINGS="$STATE/settings"
+get_setting() {  # KEY DEFAULT
+    local v=""
+    [ -f "$SETTINGS" ] && v="$(sed -n "s/^$1=//p" "$SETTINGS" | tail -1)"
+    echo "${v:-$2}"
+}
+set_setting() {  # KEY VALUE
+    mkdir -p "$STATE"
+    touch "$SETTINGS"
+    sed -i "/^$1=/d" "$SETTINGS"
+    echo "$1=$2" >> "$SETTINGS"
+}
+icon_theme_name() {
+    if [ "$(get_setting APP_ICONS 1)" = 1 ]; then echo Cachy7-Apps; else echo Cachy7; fi
+}
+
+set_panel_height() {  # only the panel that holds the Cachy7 start menu
+    local h
+    h="$(get_setting PANEL_HEIGHT 34)"
+    plasma_running || return 0
+    dbus_call --dest=org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript \
+        "string:var ps = panels(); for (var i = 0; i < ps.length; ++i) { var ws = ps[i].widgets(); for (var j = 0; j < ws.length; ++j) { if (ws[j].type == 'org.cachy7.startmenu') { ps[i].height = $h; break; } } }"
+}
+
+apply_icon_theme() {
+    local theme ci
+    theme="$(icon_theme_name)"
+    $KW --file kdeglobals --group Icons --key Theme "$theme"
+    for ci in /usr/lib/plasma-changeicons /usr/libexec/plasma-changeicons /usr/lib/*/libexec/plasma-changeicons; do
+        if [ -x "$ci" ]; then "$ci" "$theme" >/dev/null 2>&1; break; fi
+    done
+    if [ "$theme" = Cachy7-Apps ]; then apply_desktop_icons; else revert_desktop_icons; fi
+}
+
 # Where are the theme files? user dir first, then system (pacman package).
 theme_root() {
     if [ -d "$DATA/plasma/plasmoids/org.cachy7.startmenu" ]; then echo "$DATA"
@@ -251,7 +291,10 @@ cmd_install_files() {
     else
         c_warn "No CachyOS logo found; the orb uses its built-in glyph (use --logo FILE to pick one)."
     fi
-    have gtk-update-icon-cache && gtk-update-icon-cache -q -f -t "$dest/icons/Cachy7" 2>/dev/null
+    if have gtk-update-icon-cache; then
+        gtk-update-icon-cache -q -f -t "$dest/icons/Cachy7" 2>/dev/null
+        gtk-update-icon-cache -q -f -t "$dest/icons/Cachy7-Apps" 2>/dev/null
+    fi
     return 0
 }
 
@@ -376,13 +419,8 @@ cmd_apply() {
         $KW --file plasmarc --group Theme --key name cachy7-oled
     fi
 
-    c_say "Icons"
-    $KW --file kdeglobals --group Icons --key Theme Cachy7
-    for ci in /usr/lib/plasma-changeicons /usr/libexec/plasma-changeicons /usr/lib/*/libexec/plasma-changeicons; do
-        if [ -x "$ci" ]; then "$ci" Cachy7 >/dev/null 2>&1; break; fi
-    done
-
-    apply_desktop_icons
+    c_say "Icons ($( [ "$(get_setting APP_ICONS 1)" = 1 ] && echo 'with app icons' || echo 'without app icons'))"
+    apply_icon_theme
 
     c_say "Window decoration + Win7 button order"
     $KW --file kwinrc --group org.kde.kdecoration2 --key library org.kde.kwin.aurorae
@@ -401,11 +439,13 @@ cmd_apply() {
             plasma-apply-lookandfeel --apply org.cachy7.oled.desktop --resetLayout >/dev/null 2>&1 \
                 || c_warn "plasma-apply-lookandfeel failed; pick 'Cachy7 OLED' in System Settings > Global Theme"
             sleep 2
+            apply_icon_theme   # the global theme resets icons to the base set
         fi
         c_say "Wallpaper"
         have plasma-apply-wallpaperimage && \
             { plasma-apply-wallpaperimage "$root/wallpapers/Cachy7OLED/contents/images/3840x2160.png" >/dev/null 2>&1 \
               || c_warn "could not set wallpaper"; }
+        set_panel_height
         $KW --file kwinrc --group org.kde.kdecoration2 --key ButtonsOnRight IAX
         dbus_call --dest=org.kde.KWin /KWin org.kde.KWin.reconfigure
         rm -f "$AUTOSTART"
@@ -431,12 +471,14 @@ EOF
 
 # ---------------------------------------------------------------------------
 cmd_install() {
-    local layout=ask apply=1 logo=auto
+    local layout=ask apply=1 logo=auto appicons=ask
     while [ $# -gt 0 ]; do
         case "$1" in
             --layout) layout=1 ;;
             --no-layout) layout=0 ;;
             --no-apply) apply=0 ;;
+            --app-icons) appicons=1 ;;
+            --no-app-icons) appicons=0 ;;
             --logo) shift; logo="${1:-auto}" ;;
             *) c_die "unknown option: $1" ;;
         esac
@@ -447,6 +489,18 @@ cmd_install() {
         *":$HOME/.local/bin:"*) ;;
         *) c_warn "$HOME/.local/bin isn't in your PATH; the command is $HOME/.local/bin/cachy7-oled" ;;
     esac
+    if [ "$appicons" = ask ]; then
+        appicons="$(get_setting APP_ICONS ask)"
+        if [ "$appicons" = ask ]; then
+            appicons=1
+            if [ -t 0 ]; then
+                printf '\033[1;36m::\033[0m Also use the Win7-style icons for your apps (Steam, Firefox, games...)? [Y/n] '
+                read -r ans || ans=""
+                case "$ans" in n|N|no|NO) appicons=0 ;; esac
+            fi
+        fi
+    fi
+    set_setting APP_ICONS "$appicons"
     [ "$apply" = 0 ] && { c_say "Installed. Switch to it with: cachy7-oled apply [--layout]"; return 0; }
 
     if [ "$layout" = ask ]; then
@@ -496,6 +550,30 @@ cmd_uninstall() {
     c_say "Uninstalled."
 }
 
+cmd_app_icons() {
+    case "${1:-}" in
+        on|1|yes) set_setting APP_ICONS 1 ;;
+        off|0|no) set_setting APP_ICONS 0 ;;
+        *) echo "usage: cachy7-oled app-icons on|off   (now: $( [ "$(get_setting APP_ICONS 1)" = 1 ] && echo on || echo off))"; return 1 ;;
+    esac
+    [ -n "$(theme_root)" ] || c_die "theme files not installed - run 'cachy7-oled install' first"
+    if [ "$(read_ini "$CONF/plasmarc" Theme name)" = cachy7-oled ]; then
+        apply_icon_theme
+        c_say "App icons $1."
+    else
+        c_say "App icons will be $1 next time you run 'cachy7-oled apply'."
+    fi
+}
+
+cmd_panel_height() {
+    if [ -z "${1:-}" ]; then echo "taskbar height: $(get_setting PANEL_HEIGHT 34)px"; return 0; fi
+    case "$1" in *[!0-9]*) c_die "height must be a number of pixels, e.g. 34" ;; esac
+    { [ "$1" -ge 24 ] && [ "$1" -le 80 ]; } || c_die "pick something between 24 and 80"
+    set_setting PANEL_HEIGHT "$1"
+    if plasma_running; then set_panel_height; c_say "Taskbar is now $1px."
+    else c_say "Saved; the taskbar becomes $1px next time you run 'cachy7-oled apply' in desktop mode."; fi
+}
+
 cmd_status() {
     local root applied
     root="$(theme_root)"
@@ -505,6 +583,7 @@ cmd_status() {
     if [ "$applied" = cachy7-oled ]; then echo "  applied:  yes"; else echo "  applied:  no (Plasma style: ${applied:-default})"; fi
     if [ -f "$SNAP/taken" ]; then echo "  backup:   your setup from $(cat "$SNAP/taken") - 'cachy7-oled revert' restores it"
     else echo "  backup:   none"; fi
+    echo "  app icons: $( [ "$(get_setting APP_ICONS 1)" = 1 ] && echo on || echo off)   taskbar: $(get_setting PANEL_HEIGHT 34)px"
     [ -f "$AUTOSTART" ] && echo "  pending:  will finish applying at next desktop login"
     start_menu_on_panel && echo "  menu:     Cachy7 start menu is on your panel" || echo "  menu:     not on your panel - run 'cachy7-oled apply --layout'"
     plasma_running && echo "  desktop:  running" || echo "  desktop:  not running"
@@ -521,6 +600,8 @@ case "$cmd" in
     revert|restore) cmd_revert ;;
     uninstall|remove) cmd_uninstall ;;
     status) cmd_status ;;
+    app-icons) cmd_app_icons "$@" ;;
+    panel-height) cmd_panel_height "$@" ;;
     version|--version) echo "$VERSION" ;;
     *) usage ;;
 esac

@@ -3,7 +3,7 @@
 
 var panel = new Panel
 panel.location = "bottom"
-panel.height = 40
+panel.height = 34
 panel.hiding = "none"
 try { panel.floating = false } catch (e) {}
 

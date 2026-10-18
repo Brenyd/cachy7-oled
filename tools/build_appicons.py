@@ -16,7 +16,26 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from svgkit import Doc, f  # noqa: E402
 
 ROOT = os.path.abspath(sys.argv[1] if len(sys.argv) > 1 else ".")
-OUT = os.path.join(ROOT, "icons/Cachy7/scalable/apps")
+THEME = os.path.join(ROOT, "icons/Cachy7-Apps")
+OUT = os.path.join(THEME, "scalable/apps")
+
+INDEX = """[Icon Theme]
+Name=Cachy7 Apps
+Comment=Cachy7 icons plus Win7-era glossy app icons
+Inherits=Cachy7,breeze-dark,breeze,hicolor
+Example=steam
+DisplayDepth=32
+FollowsColorScheme=false
+
+Directories=scalable/apps
+
+[scalable/apps]
+Size=48
+MinSize=16
+MaxSize=512
+Context=Applications
+Type=Scalable
+"""
 
 # ---------------------------------------------------------------------------
 # palettes: hard-edged horizontal stripes, top to bottom
@@ -1180,7 +1199,12 @@ def slug(name):
 
 
 def build():
+    import shutil
+    if os.path.isdir(THEME):
+        shutil.rmtree(THEME)
     os.makedirs(OUT, exist_ok=True)
+    with open(os.path.join(THEME, "index.theme"), "w") as fh:
+        fh.write(INDEX)
     manifest = []
     for label, names, emblem, a, b in APPS:
         I = Icon(a, b)
