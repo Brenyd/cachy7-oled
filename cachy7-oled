@@ -8,6 +8,7 @@
 #   cachy7-oled status                 what's installed / applied / backed up
 #   cachy7-oled app-icons on|off       Win7-style icons for your apps (optional)
 #   cachy7-oled panel-height [N]       taskbar height in px (default 34)
+#   cachy7-oled doctor                 diagnose icons not showing up
 #
 # Everything is per-user unless installed with the PKGBUILD (then files live in /usr/share).
 set -u
@@ -201,6 +202,28 @@ apply_icon_theme() {
         if [ -x "$ci" ]; then "$ci" "$theme" >/dev/null 2>&1; break; fi
     done
     if [ "$theme" = Cachy7-Apps ]; then apply_desktop_icons; else revert_desktop_icons; fi
+    refresh_icon_caches
+}
+
+# Plasma keeps rendered icons in ~/.cache/icon-cache.kcache; after switching themes it
+# can keep serving the old picture for names it has already seen (steam, firefox...).
+refresh_icon_caches() {
+    local root t
+    root="$(theme_root)"
+    if [ -n "$root" ] && [ -w "$root/icons" ] && have gtk-update-icon-cache; then
+        for t in Cachy7 Cachy7-Apps; do
+            [ -d "$root/icons/$t" ] && gtk-update-icon-cache -q -f -t "$root/icons/$t" 2>/dev/null
+        done
+    fi
+    rm -f "${XDG_CACHE_HOME:-$HOME/.cache}/icon-cache.kcache"
+    ICONS_CHANGED=1
+}
+
+restart_shell_if_icons_changed() {
+    [ "${ICONS_CHANGED:-0}" = 1 ] && plasma_running || return 0
+    c_say "Restarting the Plasma shell so it loads the new icons"
+    stop_plasmashell
+    start_plasmashell
 }
 
 # Where are the theme files? user dir first, then system (pacman package).
@@ -445,6 +468,7 @@ cmd_apply() {
         have plasma-apply-wallpaperimage && \
             { plasma-apply-wallpaperimage "$root/wallpapers/Cachy7OLED/contents/images/3840x2160.png" >/dev/null 2>&1 \
               || c_warn "could not set wallpaper"; }
+        restart_shell_if_icons_changed
         set_panel_height
         $KW --file kwinrc --group org.kde.kdecoration2 --key ButtonsOnRight IAX
         dbus_call --dest=org.kde.KWin /KWin org.kde.KWin.reconfigure
@@ -559,6 +583,7 @@ cmd_app_icons() {
     [ -n "$(theme_root)" ] || c_die "theme files not installed - run 'cachy7-oled install' first"
     if [ "$(read_ini "$CONF/plasmarc" Theme name)" = cachy7-oled ]; then
         apply_icon_theme
+        restart_shell_if_icons_changed
         c_say "App icons $1."
     else
         c_say "App icons will be $1 next time you run 'cachy7-oled apply'."
@@ -572,6 +597,44 @@ cmd_panel_height() {
     set_setting PANEL_HEIGHT "$1"
     if plasma_running; then set_panel_height; c_say "Taskbar is now $1px."
     else c_say "Saved; the taskbar becomes $1px next time you run 'cachy7-oled apply' in desktop mode."; fi
+}
+
+cmd_doctor() {
+    local root theme finder n=0 ours=0 other=0 missing=0 name path shown=0
+    root="$(theme_root)"
+    theme="$(read_ini "$CONF/kdeglobals" Icons Theme)"
+    echo "Cachy7 OLED $VERSION doctor"
+    echo "  theme files:      ${root:-NOT INSTALLED}"
+    echo "  icon theme set:   ${theme:-<unset>}   (want: $(icon_theme_name))"
+    [ -n "$root" ] && echo "  app icon files:   $(ls "$root/icons/Cachy7-Apps/scalable/apps" 2>/dev/null | wc -l)"
+    for c in "$root/icons/Cachy7-Apps/icon-theme.cache" "${XDG_CACHE_HOME:-$HOME/.cache}/icon-cache.kcache"; do
+        [ -e "$c" ] && echo "  cache:            $c ($(date -r "$c" '+%H:%M %b %d'))"
+    done
+    plasma_running && echo "  plasmashell:      running since $(ps -o lstart= -C plasmashell 2>/dev/null | head -1)" || echo "  plasmashell:      not running"
+    finder=""
+    for c in kiconfinder6 kiconfinder5 kiconfinder; do have "$c" && { finder="$c"; break; }; done
+    if [ -z "$finder" ] || [ -z "$root" ]; then
+        echo "  (kiconfinder6 not found - can't test lookups)"
+        return 0
+    fi
+    echo "  lookups via $finder (first misses shown):"
+    for path in "$root"/icons/Cachy7-Apps/scalable/apps/*.svg; do
+        name="$(basename "$path" .svg)"
+        case "$name" in cachy7-app-*) continue ;; esac
+        n=$((n + 1))
+        local got
+        got="$("$finder" "$name" 2>/dev/null | head -1)"
+        case "$got" in
+            */Cachy7-Apps/*) ours=$((ours + 1)) ;;
+            "") missing=$((missing + 1)) ;;
+            *) other=$((other + 1))
+               if [ "$shown" -lt 8 ]; then echo "      $name -> $got"; shown=$((shown + 1)); fi ;;
+        esac
+    done
+    echo "  result: $ours/$n resolve to Cachy7-Apps, $other resolve elsewhere, $missing not found"
+    if [ "$ours" = "$n" ]; then
+        echo "  => lookups are fine; if you still see old icons, run: cachy7-oled app-icons on"
+    fi
 }
 
 cmd_status() {
@@ -601,6 +664,7 @@ case "$cmd" in
     uninstall|remove) cmd_uninstall ;;
     status) cmd_status ;;
     app-icons) cmd_app_icons "$@" ;;
+    doctor) cmd_doctor ;;
     panel-height) cmd_panel_height "$@" ;;
     version|--version) echo "$VERSION" ;;
     *) usage ;;

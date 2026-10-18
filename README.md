@@ -138,6 +138,9 @@ To add icons for more apps, edit the `APPS` table in `tools/build_appicons.py`.
 
 ## If something's off
 
+- App icons not changing: run `cachy7-oled doctor`. It checks which icon theme Plasma is
+  using and looks up every app icon name, listing any that resolve somewhere else.
+
 - Start menu shows an error or no apps: run
   `journalctl --user -b | grep -i cachy7` and check the output — the widget logs which
   part of Plasma's launcher API it could not use.
