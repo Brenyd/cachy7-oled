@@ -8,6 +8,7 @@ Item {
 
     property string text: ""
     property var iconSource
+    property var badgeSource: ""
     property string subText: ""
     property int iconSize: Kirigami.Units.iconSizes.medium
     property bool highlighted: false
@@ -35,6 +36,17 @@ Item {
             Layout.preferredWidth: item.iconSize
             Layout.preferredHeight: item.iconSize
             Layout.alignment: Qt.AlignVCenter
+
+            Kirigami.Icon {
+                visible: !!item.badgeSource
+                source: item.badgeSource || ""
+                width: Math.round(parent.width * 0.6)
+                height: width
+                anchors.right: parent.right
+                anchors.bottom: parent.bottom
+                anchors.rightMargin: -Math.round(width * 0.15)
+                anchors.bottomMargin: -Math.round(width * 0.1)
+            }
         }
 
         ColumnLayout {

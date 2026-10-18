@@ -16,6 +16,7 @@ PlasmoidItem {
 
     property QtObject rootModel: null
     property QtObject allAppsModel: null
+    property int allAppsRow: -1
     property QtObject frequentModel: null
     property QtObject runnerModel: null
     readonly property QtObject favoritesModel: rootModel ? rootModel.favoritesModel : null
@@ -122,15 +123,18 @@ PlasmoidItem {
         }
         // "All Applications" is the biggest group, whatever its row is.
         let best = null
+        let bestRow = -1
         let bestCount = -1
         for (let i = 0; i < rootModel.count; ++i) {
             const m = rootModel.modelForRow(i)
             if (m && m.count !== undefined && m.count > bestCount) {
                 best = m
+                bestRow = i
                 bestCount = m.count
             }
         }
         allAppsModel = best
+        allAppsRow = bestRow
     }
 
     function refreshModels() {

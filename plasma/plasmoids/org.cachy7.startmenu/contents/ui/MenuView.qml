@@ -18,6 +18,18 @@ Item {
     Layout.preferredHeight: gu * 30
 
     property bool showAll: false
+    property var openCats: []
+
+    function toggleCat(name) {
+        const list = openCats.slice()
+        const i = list.indexOf(name)
+        if (i >= 0) {
+            list.splice(i, 1)
+        } else {
+            list.push(name)
+        }
+        openCats = list
+    }
     property string hoverIcon: ""
     readonly property string view: searchField.text.length > 0 ? "search" : (showAll ? "all" : "home")
     readonly property QtObject results: (root.runnerModel && root.runnerModel.count > 0) ? root.runnerModel.modelForRow(0) : null
@@ -33,7 +45,8 @@ Item {
         searchField.text = ""
         showAll = false
         hoverIcon = ""
-        allList.currentIndex = -1
+        openCats = []
+        allTree.contentY = 0
         searchField.forceActiveFocus()
     }
 
@@ -53,7 +66,7 @@ Item {
     }
 
     function activeList() {
-        return view === "search" ? resultsList : (view === "all" ? allList : null)
+        return view === "search" ? resultsList : null
     }
 
     function launchCurrent() {
@@ -62,7 +75,7 @@ Item {
             return
         }
         const row = list.currentIndex >= 0 ? list.currentIndex : 0
-        root.launch(view === "search" ? menu.results : root.allAppsModel, row)
+        root.launch(menu.results, row)
     }
 
     // Hover enter on the next link can arrive before hover leave on the previous one,
@@ -184,25 +197,79 @@ Item {
                         }
                     }
 
-                    // --- All Programs ---
-                    ListView {
-                        id: allList
+                    // --- All Programs: Win7-style folders that expand in place ---
+                    Flickable {
+                        id: allTree
                         anchors.fill: parent
                         visible: menu.view === "all"
-                        model: root.allAppsModel
                         clip: true
-                        currentIndex: -1
+                        contentHeight: treeCol.implicitHeight
                         boundsBehavior: Flickable.StopAtBounds
-                        highlightMoveDuration: 0
                         QQC2.ScrollBar.vertical: PC3.ScrollBar {}
-                        delegate: AppItem {
-                            width: ListView.view.width
-                            text: model.display || ""
-                            iconSource: model.decoration
-                            iconSize: Kirigami.Units.iconSizes.smallMedium
-                            highlighted: ListView.isCurrentItem
-                            onActivated: root.launch(root.allAppsModel, index)
-                            onMenuRequested: menu.openContext(model.favoriteId)
+
+                        ColumnLayout {
+                            id: treeCol
+                            width: allTree.width
+                            spacing: 1
+
+                            Repeater {
+                                model: root.rootModel
+                                delegate: ColumnLayout {
+                                    id: cat
+                                    Layout.fillWidth: true
+                                    spacing: 1
+
+                                    readonly property string catName: model.display || ""
+                                    readonly property bool open: menu.openCats.indexOf(catName) >= 0
+                                    readonly property QtObject apps: (open && root.rootModel) ? root.rootModel.modelForRow(index) : null
+                                    visible: index !== root.allAppsRow && catName.length > 0
+
+                                    AppItem {
+                                        Layout.fillWidth: true
+                                        text: cat.catName
+                                        iconSource: cat.open ? "folder-open" : "folder"
+                                        badgeSource: model.decoration
+                                        iconSize: Kirigami.Units.iconSizes.smallMedium
+                                        bold: cat.open
+                                        onActivated: menu.toggleCat(cat.catName)
+                                    }
+
+                                    Item {
+                                        Layout.fillWidth: true
+                                        visible: cat.open
+                                        implicitHeight: appsCol.implicitHeight
+
+                                        // tree guide line, like Win7's expanded folders
+                                        Rectangle {
+                                            x: Math.round(menu.gu * 0.85)
+                                            width: 1
+                                            height: parent.height - 4
+                                            y: 2
+                                            color: Qt.rgba(0.56, 0.80, 1.0, 0.30)
+                                        }
+
+                                        ColumnLayout {
+                                            id: appsCol
+                                            anchors.left: parent.left
+                                            anchors.right: parent.right
+                                            anchors.leftMargin: Math.round(menu.gu * 1.3)
+                                            spacing: 1
+
+                                            Repeater {
+                                                model: cat.apps
+                                                delegate: AppItem {
+                                                    Layout.fillWidth: true
+                                                    text: model.display || ""
+                                                    iconSource: model.decoration
+                                                    iconSize: Kirigami.Units.iconSizes.smallMedium
+                                                    onActivated: root.launch(cat.apps, index)
+                                                    onMenuRequested: menu.openContext(model.favoriteId)
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
 
@@ -269,8 +336,8 @@ Item {
                         hoverEnabled: true
                         onClicked: {
                             menu.showAll = !menu.showAll
-                            allList.currentIndex = -1
-                            allList.positionViewAtBeginning()
+                            menu.openCats = []
+                            allTree.contentY = 0
                             searchField.forceActiveFocus()
                         }
                     }
