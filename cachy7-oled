@@ -74,6 +74,95 @@ warn_missing_start_menu() {
     c_warn "         or:  right-click panel > Add Widgets > 'Cachy7 Start Menu'"
 }
 
+# ---------------------------------------------------------------------------
+# app shortcuts whose Icon= is an image path can't be themed; repoint them
+# (originals backed up / personal overrides recorded, all undone by revert)
+# ---------------------------------------------------------------------------
+DESK="$STATE/desktops"
+# shellcheck disable=SC2206
+SYS_APPDIRS=(${CACHY7_SYS_APPDIRS:-/usr/share/applications /var/lib/flatpak/exports/share/applications $DATA/flatpak/exports/share/applications})
+
+ICON_OVERRIDES='bb_launcher.desktop	cachy7-app-bb_launcher
+browning_african_safari.desktop	cachy7-app-browning_african_safari
+creamlinux.desktop	cachy7-app-creamlinux
+curseforge.desktop	cachy7-app-curseforge
+Eden.desktop	cachy7-app-eden
+epic_games_launcher.desktop	cachy7-app-epic_games_launcher
+hplip.desktop	cachy7-app-hp_device_manager
+hp-uiscan.desktop	cachy7-app-hp_scan
+iptvnator.desktop	cachy7-app-iptvnator
+isomaster.desktop	cachy7-app-isomaster
+jackify.desktop	cachy7-app-jackify
+Mario Kart DX GP.desktop	cachy7-app-mario_kart_dx_gp
+parsecd.desktop	cachy7-app-parsec
+photocraft.desktop	cachy7-app-photocraft
+ps5upload.desktop	cachy7-app-ps5upload
+refresher.desktop	cachy7-app-refresher
+slippi_launcher.desktop	cachy7-app-slippi_launcher
+Tekno_Parrot.desktop	cachy7-app-teknoparrot
+TeknoParrotUi.desktop	cachy7-app-teknoparrot
+simpsons-recompiled.desktop	cachy7-app-simpsons_recompiled
+tinywiibackupmanager.desktop	cachy7-app-tinywiibackupmanager
+wii_backup_fusion.desktop	cachy7-app-wii_backup_fusion
+nemo.desktop	nemo
+Nemo.desktop	nemo
+guitarix.desktop	gx_head'
+
+set_desktop_icon() {  # FILE ICON -> stdout
+    awk -v icon="$2" '
+        /^\[/ { sec = $0 }
+        sec == "[Desktop Entry]" && /^Icon=/ && !done { print "Icon=" icon; done = 1; next }
+        { print }
+    ' "$1"
+}
+
+refresh_menus() {
+    if have kbuildsycoca6; then kbuildsycoca6 >/dev/null 2>&1
+    elif have kbuildsycoca5; then kbuildsycoca5 >/dev/null 2>&1; fi
+}
+
+apply_desktop_icons() {
+    local file icon dest src d n=0
+    mkdir -p "$DESK/orig" "$DATA/applications"
+    touch "$DESK/created.list"
+    while IFS=$'\t' read -r file icon; do
+        [ -n "$file" ] || continue
+        dest="$DATA/applications/$file"
+        src=""
+        if [ -f "$dest" ]; then
+            src="$dest"
+            # back up the user's own file once (never our generated override)
+            if ! grep -qxF "$file" "$DESK/created.list" && [ ! -f "$DESK/orig/$file" ]; then
+                cp -p "$dest" "$DESK/orig/$file"
+            fi
+        else
+            for d in "${SYS_APPDIRS[@]}"; do
+                if [ -f "$d/$file" ]; then src="$d/$file"; break; fi
+            done
+            [ -n "$src" ] || continue
+            grep -qxF "$file" "$DESK/created.list" || echo "$file" >> "$DESK/created.list"
+        fi
+        set_desktop_icon "$src" "$icon" > "$dest.cachy7tmp" && mv "$dest.cachy7tmp" "$dest"
+        n=$((n + 1))
+    done <<< "$ICON_OVERRIDES"
+    [ "$n" -gt 0 ] && c_say "App shortcuts re-pointed to Cachy7 icons: $n"
+    refresh_menus
+}
+
+revert_desktop_icons() {
+    [ -d "$DESK" ] || return 0
+    local f
+    while IFS= read -r f; do
+        [ -n "$f" ] && rm -f "$DATA/applications/$f"
+    done < "$DESK/created.list"
+    for f in "$DESK/orig"/*.desktop; do
+        [ -f "$f" ] && cp -p "$f" "$DATA/applications/$(basename "$f")"
+    done
+    rm -rf "$DESK"
+    refresh_menus
+    c_say "App shortcuts restored"
+}
+
 # Where are the theme files? user dir first, then system (pacman package).
 theme_root() {
     if [ -d "$DATA/plasma/plasmoids/org.cachy7.startmenu" ]; then echo "$DATA"
@@ -214,7 +303,11 @@ start_plasmashell() {
 }
 
 cmd_revert() {
-    [ -f "$SNAP/taken" ] || { c_warn "No backup found - nothing to revert (theme was never applied by this tool)."; return 1; }
+    if [ ! -f "$SNAP/taken" ]; then
+        if [ -d "$DESK" ]; then revert_desktop_icons; return 0; fi
+        c_warn "No backup found - nothing to revert (theme was never applied by this tool)."
+        return 1
+    fi
     local was_running=0 f
     plasma_running && was_running=1
     c_say "Restoring your setup from $(cat "$SNAP/taken")"
@@ -232,6 +325,7 @@ cmd_revert() {
     done < "$SNAP/missing.list"
     rm -f "$AUTOSTART"
     rmdir "$(dirname "$AUTOSTART")" 2>/dev/null
+    revert_desktop_icons
 
     if [ "$was_running" = 1 ]; then
         start_plasmashell
@@ -287,6 +381,8 @@ cmd_apply() {
     for ci in /usr/lib/plasma-changeicons /usr/libexec/plasma-changeicons /usr/lib/*/libexec/plasma-changeicons; do
         if [ -x "$ci" ]; then "$ci" Cachy7 >/dev/null 2>&1; break; fi
     done
+
+    apply_desktop_icons
 
     c_say "Window decoration + Win7 button order"
     $KW --file kwinrc --group org.kde.kdecoration2 --key library org.kde.kwin.aurorae
@@ -388,6 +484,7 @@ cmd_uninstall() {
         $KW --file ksplashrc --group KSplash --key Theme org.kde.breeze.desktop
         dbus_call --dest=org.kde.KWin /KWin org.kde.KWin.reconfigure
     fi
+    revert_desktop_icons
     c_say "Removing theme files"
     local p
     for p in "${PARTS[@]}"; do rm -rf "${DATA:?}/$p"; done
