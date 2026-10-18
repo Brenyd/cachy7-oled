@@ -60,11 +60,15 @@ wallpaper finish applying the next time you enter desktop mode.
 ```bash
 cd cachy7-oled
 git pull
-./install.sh --no-layout
+./install.sh
 ```
 
-Your original pre-theme backup is kept, so `cachy7-oled revert` still takes you all the
-way back.
+The installer checks your panel: if the Cachy7 start menu is already on it, it leaves
+your panel alone; if it's missing (for example after `cachy7-oled revert`), it offers
+to set up the Windows 7 taskbar again. Your pre-theme backup is kept either way.
+
+Plasma keeps the old start menu code loaded until it restarts, so after updating run
+`systemctl --user restart plasma-plasmashell` (or log out and back in).
 
 ## Undo — one command
 
@@ -75,7 +79,7 @@ wallpaper, colors, icons, window frame, splash) to `~/.local/share/cachy7-oled/s
 cachy7-oled revert      # exactly your old desktop back, theme stays installed
 cachy7-oled apply       # switch to it again (add --layout for the taskbar)
 cachy7-oled uninstall   # revert + delete all theme files
-cachy7-oled status      # installed? applied? backup from when?
+cachy7-oled status      # installed? applied? start menu on panel? backup from when?
 ```
 
 Re-applying or updating never overwrites that first backup, so `revert` always goes

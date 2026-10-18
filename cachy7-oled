@@ -63,6 +63,17 @@ read_ini() {
     ' "$1"
 }
 
+start_menu_on_panel() {
+    grep -q '^plugin=org.cachy7.startmenu$' "$CONF/plasma-org.kde.plasma.desktop-appletsrc" 2>/dev/null
+}
+
+warn_missing_start_menu() {
+    start_menu_on_panel && return 0
+    c_warn "The Cachy7 start menu isn't on your panel (normal after 'revert' or with --no-layout)."
+    c_warn "Get it with:  cachy7-oled apply --layout   (Win7 taskbar; your current panel is backed up)"
+    c_warn "         or:  right-click panel > Add Widgets > 'Cachy7 Start Menu'"
+}
+
 # Where are the theme files? user dir first, then system (pacman package).
 theme_root() {
     if [ -d "$DATA/plasma/plasmoids/org.cachy7.startmenu" ]; then echo "$DATA"
@@ -303,6 +314,7 @@ cmd_apply() {
         dbus_call --dest=org.kde.KWin /KWin org.kde.KWin.reconfigure
         rm -f "$AUTOSTART"
         c_say "Applied. Undo any time with:  cachy7-oled revert"
+        [ "$layout" = 1 ] || warn_missing_start_menu
     else
         mkdir -p "$(dirname "$AUTOSTART")"
         local args="apply --deferred"
@@ -344,14 +356,20 @@ cmd_install() {
     if [ "$layout" = ask ]; then
         layout=0
         if [ -t 0 ]; then
-            printf '\033[1;36m::\033[0m Also switch your panel to the Windows 7 taskbar? (revert restores your current one) [y/N] '
-            read -r ans || ans=""
-            case "$ans" in y|Y|yes|YES) layout=1 ;; esac
+            if start_menu_on_panel; then
+                printf '\033[1;36m::\033[0m Start menu is already on your panel. Reset panel to the Windows 7 taskbar anyway? [y/N] '
+                read -r ans || ans=""
+                case "$ans" in y|Y|yes|YES) layout=1 ;; esac
+            else
+                printf '\033[1;36m::\033[0m Switch your panel to the Windows 7 taskbar with the Aero start menu? (revert restores your current one) [Y/n] '
+                read -r ans || ans=""
+                case "$ans" in n|N|no|NO) ;; *) layout=1 ;; esac
+            fi
         fi
     fi
     if [ "$layout" = 1 ]; then cmd_apply --layout; else
         cmd_apply
-        c_say "Panel left alone. Add the orb: right-click panel > Add Widgets > 'Cachy7 Start Menu'."
+        start_menu_on_panel && c_say "Panel left alone (start menu already on it)."
     fi
 }
 
@@ -391,6 +409,7 @@ cmd_status() {
     if [ -f "$SNAP/taken" ]; then echo "  backup:   your setup from $(cat "$SNAP/taken") - 'cachy7-oled revert' restores it"
     else echo "  backup:   none"; fi
     [ -f "$AUTOSTART" ] && echo "  pending:  will finish applying at next desktop login"
+    start_menu_on_panel && echo "  menu:     Cachy7 start menu is on your panel" || echo "  menu:     not on your panel - run 'cachy7-oled apply --layout'"
     plasma_running && echo "  desktop:  running" || echo "  desktop:  not running"
     return 0
 }
