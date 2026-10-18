@@ -65,6 +65,23 @@ Item {
         root.launch(view === "search" ? menu.results : root.allAppsModel, row)
     }
 
+    // Hover enter on the next link can arrive before hover leave on the previous one,
+    // so a link only clears the picture if it is still showing its own icon.
+    function setHover(icon, on) {
+        if (on) {
+            hoverClear.stop()
+            hoverIcon = icon
+        } else if (hoverIcon === icon) {
+            hoverClear.restart()
+        }
+    }
+
+    Timer {
+        id: hoverClear
+        interval: 160
+        onTriggered: menu.hoverIcon = ""
+    }
+
     function openContext(favId) {
         if (!favId) {
             return
@@ -369,10 +386,22 @@ Item {
                         smooth: true
                     }
                     Kirigami.Icon {
+                        id: frameIcon
                         anchors.fill: parent
                         anchors.margins: 4
                         visible: !face.visible
                         source: menu.hoverIcon !== "" ? menu.hoverIcon : "user-identity"
+                        onSourceChanged: iconFade.restart()
+
+                        NumberAnimation {
+                            id: iconFade
+                            target: frameIcon
+                            property: "opacity"
+                            from: 0.25
+                            to: 1
+                            duration: 140
+                            easing.type: Easing.OutQuad
+                        }
                     }
                 }
 
@@ -381,37 +410,37 @@ Item {
                     iconName: "user-home"
                     bold: true
                     onActivated: menu.openLocation(StandardPaths.HomeLocation)
-                    onHovered: on => menu.hoverIcon = on ? iconName : ""
+                    onHovered: on => menu.setHover(iconName, on)
                 }
                 PlaceItem {
                     text: i18n("Documents")
                     iconName: "folder-documents"
                     onActivated: menu.openLocation(StandardPaths.DocumentsLocation)
-                    onHovered: on => menu.hoverIcon = on ? iconName : ""
+                    onHovered: on => menu.setHover(iconName, on)
                 }
                 PlaceItem {
                     text: i18n("Pictures")
                     iconName: "folder-pictures"
                     onActivated: menu.openLocation(StandardPaths.PicturesLocation)
-                    onHovered: on => menu.hoverIcon = on ? iconName : ""
+                    onHovered: on => menu.setHover(iconName, on)
                 }
                 PlaceItem {
                     text: i18n("Music")
                     iconName: "folder-music"
                     onActivated: menu.openLocation(StandardPaths.MusicLocation)
-                    onHovered: on => menu.hoverIcon = on ? iconName : ""
+                    onHovered: on => menu.setHover(iconName, on)
                 }
                 PlaceItem {
                     text: i18n("Videos")
                     iconName: "folder-videos"
                     onActivated: menu.openLocation(StandardPaths.MoviesLocation)
-                    onHovered: on => menu.hoverIcon = on ? iconName : ""
+                    onHovered: on => menu.setHover(iconName, on)
                 }
                 PlaceItem {
                     text: i18n("Downloads")
                     iconName: "folder-download"
                     onActivated: menu.openLocation(StandardPaths.DownloadLocation)
-                    onHovered: on => menu.hoverIcon = on ? iconName : ""
+                    onHovered: on => menu.setHover(iconName, on)
                 }
 
                 Rectangle {
@@ -428,25 +457,25 @@ Item {
                     text: i18n("Computer")
                     iconName: "computer"
                     onActivated: menu.openUrl("file:///")
-                    onHovered: on => menu.hoverIcon = on ? iconName : ""
+                    onHovered: on => menu.setHover(iconName, on)
                 }
                 PlaceItem {
                     text: i18n("System Settings")
                     iconName: "preferences-system"
                     onActivated: menu.runCommand("systemsettings")
-                    onHovered: on => menu.hoverIcon = on ? iconName : ""
+                    onHovered: on => menu.setHover(iconName, on)
                 }
                 PlaceItem {
                     text: i18n("Terminal")
                     iconName: "utilities-terminal"
                     onActivated: menu.runCommand("konsole")
-                    onHovered: on => menu.hoverIcon = on ? iconName : ""
+                    onHovered: on => menu.setHover(iconName, on)
                 }
                 PlaceItem {
                     text: i18n("Run…")
                     iconName: "system-run"
                     onActivated: menu.runCommand("krunner")
-                    onHovered: on => menu.hoverIcon = on ? iconName : ""
+                    onHovered: on => menu.setHover(iconName, on)
                 }
 
                 Item {
